@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 import anndata
 from scipy import sparse
-from pcNet import make_pcNet
-from sklearn.preprocessing import MinMaxScaler
 from typing import Union
 import matplotlib.pyplot as plt
 import seaborn as sns
