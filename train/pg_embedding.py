@@ -6,7 +6,7 @@ import os
 import tensorflow._api.v2.compat.v1 as tf
 tf.disable_v2_behavior()
 import matplotlib.pyplot as plt
-import time
+
 #from try_loss import nce_loss_my, nce_loss_my_pair, nce_loss_my_batch
 
 class Dataset(object):
@@ -149,9 +149,6 @@ def nce_loss_my_batch(weights,
         true_logits = tf.matmul(inputs, positive_samples, transpose_b=True)#batch_size*1*1 
         sampled_logits = tf.matmul(inputs, negative_samples, transpose_b=True) #batch_size*1*5
 
-        #true_logits -= tf.log(true_expected_count)
-        #sampled_logits -= tf.log(sampled_expected_count)
-
         out_logits = tf.concat([true_logits, sampled_logits], axis=2)
         out_labels = tf.concat([
                 tf.ones_like(true_logits) / num_true,
@@ -166,35 +163,6 @@ def nce_loss_my_batch(weights,
 
     return loss_weight * tf.reduce_sum(sampled_losses, axis=2)
 
-def nce_loss_my_pair(weights,
-             labels,
-             inputs,
-             num_true=1,
-             sampled_values=None):
-    #weights = [weights]
-    
-    
-    sampled_1, sampled_2 = (
-        tf.stop_gradient(s) for s in sampled_values)
-    positive_samples = tf.gather(weights, labels)
-    negative_samples_1 = tf.gather(weights, sampled_1)
-    negative_samples_2 = tf.gather(weights, sampled_2)
-
-    true_logits = tf.matmul(inputs, positive_samples, transpose_b=True) 
-    sampled_logits = negative_samples_1 * negative_samples_2  # 结果矩阵是 5x100
-    sampled_logits = tf.reshape(tf.reduce_sum(sampled_logits, axis=1), [1,-1])
-
-    out_logits = tf.concat([true_logits, sampled_logits], 1)
-    out_labels = tf.concat([
-            tf.ones_like(true_logits) / num_true,
-            tf.zeros_like(sampled_logits)
-        ], 1)
-
-    sampled_losses = tf.nn.sigmoid_cross_entropy_with_logits(
-        labels=out_labels, logits=out_logits, name="sampled_losses")
-  # sampled_losses is batch_size x {true_loss, sampled_losses...}
-  # We sum out true and sampled losses.
-    return tf.reduce_sum(sampled_losses, axis=1)
 
 def build_model(VOCAB_SIZE,EMBED_SIZE,NUM_SAMPLED):
 
@@ -471,7 +439,7 @@ def metapath2vec_pg(dirpath):
     net_RF = np.abs(net_RF)
     net_XGB = sparse.coo_matrix(mmread(os.path.join(dirpath, "test/PGN_XGB_sparse.mtx")))
     net_XGB = np.abs(net_XGB)
-    pg_net = net_lasso#+net_RF+net_XGB
+    pg_net = net_lasso + net_RF + net_XGB
     used_peaks += list((pg_net).tocoo().row)
     used_peaks = np.array(list(set(used_peaks)))
 
@@ -530,12 +498,11 @@ def metapath2vec_pg(dirpath):
     care_type = 0
     LOG_DIRECTORY = os.path.join(dirpath, "embedding")
     LOG_INTERVAL = -1
-    MAX_KEEP_MODEL = 0#int(NUM_EPOCHS/10) + 1
+    MAX_KEEP_MODEL = 1#int(NUM_EPOCHS/10) + 1
     mpg = get_co_relation(peak_net, pg_net, gp_net, gene_net)
     w_placeholder,center_node_placeholder, context_node_placeholder, negative_samples_placeholder, loss = build_model(VOCAB_SIZE = node_numbers,
                                                                                                         EMBED_SIZE = EMBED_SIZE,
-                                                                                                        NUM_SAMPLED = NUM_SAMPLED,
-                                                                                                        BATCH_SIZE = BATCH_SIZE)
+                                                                                                        NUM_SAMPLED = NUM_SAMPLED)
     optimizer = traning_op(loss,
                            LEARNING_RATE=LEARNING_RATE)
     train(w_placeholder,
