@@ -6,6 +6,7 @@ import os
 import tensorflow._api.v2.compat.v1 as tf
 tf.disable_v2_behavior()
 import matplotlib.pyplot as plt
+import argparse
 
 #from try_loss import nce_loss_my, nce_loss_my_pair, nce_loss_my_batch
 
@@ -435,9 +436,9 @@ def metapath2vec_pg(dirpath):
     used_peaks = list(peak_net.row)
     net_lasso = sparse.coo_matrix(mmread(os.path.join(dirpath, "test/PGN_Lasso.mtx")))
     net_lasso = np.abs(net_lasso)
-    net_RF = sparse.coo_matrix(mmread(os.path.join(dirpath, "test/PGN_RF_sparse.mtx")))
+    net_RF = sparse.coo_matrix(mmread(os.path.join(dirpath, "test/PGN_RF.mtx")))
     net_RF = np.abs(net_RF)
-    net_XGB = sparse.coo_matrix(mmread(os.path.join(dirpath, "test/PGN_XGB_sparse.mtx")))
+    net_XGB = sparse.coo_matrix(mmread(os.path.join(dirpath, "test/PGN_XGB.mtx")))
     net_XGB = np.abs(net_XGB)
     pg_net = net_lasso + net_RF + net_XGB
     used_peaks += list((pg_net).tocoo().row)
@@ -528,8 +529,10 @@ def metapath2vec_pg(dirpath):
 	
 
 if __name__ == "__main__":
-    dirpath = "data_example/compare/S2"
-    metapath2vec_pg(dirpath)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dirpath", type=str, default="data_example/single/")
+    args = parser.parse_args()
+    metapath2vec_pg(args.dirpath)
     
     
     

@@ -6,6 +6,7 @@ from scipy.sparse import csr_matrix, lil_matrix
 from sklearn.ensemble import RandomForestRegressor
 from tqdm import tqdm 
 import os
+import argparse
 
 def PGN_RF_shapley(X, Y, feature_set = None, gene_name = None):
     g = Y.shape[1]
@@ -73,17 +74,18 @@ def make_PGN_RF(dirpath):
     gene_name = pd.read_csv(os.path.join(dirpath, "gene_data.csv"))['x'].tolist()
     gene_neibor[['start_use', 'end_use']] = gene_neibor[['start_use', 'end_use']].astype(int)
 
-    #PGN_net = mmread(dirpath+"test/PGN_RF.mtx")
     os.makedirs(os.path.join(dirpath, "test"), exist_ok = True)
     PGN_RF = PGN_RF_shapley(peak_data, gene_data, gene_neibor, gene_name = gene_name)
-    mmwrite(os.path.join(dirpath, "test/PGN_RF.mtx"), PGN_RF)
+    #mmwrite(os.path.join(dirpath, "test/PGN_RF_100kbp.mtx"), PGN_RF)
 
     PGN_RF_sparse = process_PGN_RF(PGN_RF, threshold=0.9)
-    mmwrite(os.path.join(dirpath, "test/PGN_RF_sparse.mtx"), PGN_RF_sparse)
+    mmwrite(os.path.join(dirpath, "test/PGN_RF.mtx"), PGN_RF_sparse)
 
 if __name__ == "__main__":
-    dirpath = "data_example/compare/S2"
-    make_PGN_RF(dirpath)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dirpath", type=str, default="data_example/single/")
+    args = parser.parse_args()
+    make_PGN_RF(args.dirpath)
 
     
     

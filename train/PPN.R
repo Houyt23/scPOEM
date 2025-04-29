@@ -89,7 +89,20 @@ make_PPN <-function(dirpath){
   use_cicero(indata, cellinfo, peakinfo, "human.hg38.genome", dirpath)
 }
 
-make_PPN("data_example/single")
+args <- commandArgs(trailingOnly = TRUE)
+dirpath <- NULL
+
+for (i in seq(1, length(args))) {
+  if (args[i] == "--dirpath") {
+    dirpath <- args[i+1]
+  }
+}
+
+if (is.null(dirpath)){
+  dirpath <- "data_example/single"
+}
+
+make_PPN(dirpath)
 
 
 

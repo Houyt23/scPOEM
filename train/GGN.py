@@ -5,6 +5,7 @@ import time
 import ray
 from sklearn.decomposition import TruncatedSVD
 from scipy.io import mmread, mmwrite
+import argparse
 
 
 @ray.remote(num_cpus = 1)
@@ -98,10 +99,13 @@ def make_GGN(dirpath,
     
 
 if __name__ == "__main__":
-    dirpath = "data_example/compare/S1"
-    GGN_net = make_GGN(dirpath = dirpath,
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dirpath", type=str, default="data_example/single/")
+    parser.add_argument("--count_device", type=int, default=1)
+    args = parser.parse_args()
+    GGN_net = make_GGN(dirpath = args.dirpath,
                        rebuild_GRN = True,
                        nComp = 5,
-                       device_count = 1,
+                       device_count = args.count_device,
                        random_state = 0)
     print(GGN_net)

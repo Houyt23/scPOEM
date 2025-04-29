@@ -6,6 +6,7 @@ from scipy.sparse import csr_matrix, lil_matrix
 from xgboost import XGBRegressor
 from tqdm import tqdm  
 import os
+import argparse
 
 def PGN_XGBoost_shapley(X, Y, feature_set = None, gene_name = None):
     g = Y.shape[1]
@@ -75,18 +76,18 @@ def make_PGN_XGB(dirpath):
     gene_name = pd.read_csv(os.path.join(dirpath, "gene_data.csv"))['x'].tolist()
     gene_neibor[['start_use', 'end_use']] = gene_neibor[['start_use', 'end_use']].astype(int)
 
-    #PGN_net = mmread(dirpath+"test/PGN_RF.mtx")
     os.makedirs(os.path.join(dirpath, "test"), exist_ok = True)
     PGN_XGBoost = PGN_XGBoost_shapley(peak_data, gene_data, gene_neibor, gene_name = gene_name)
-    mmwrite(os.path.join(dirpath, "test/PGN_XGB.mtx"), PGN_XGBoost)
+    #mmwrite(os.path.join(dirpath, "test/PGN_XGB_100kbp.mtx"), PGN_XGBoost)
 
     PGN_XGBoost_sparse = process_PGN_XGBoost(PGN_XGBoost, threshold=0.9)
-    mmwrite(os.path.join(dirpath, "test/PGN_XGB_sparse.mtx"), PGN_XGBoost_sparse)
+    mmwrite(os.path.join(dirpath, "test/PGN_XGB.mtx"), PGN_XGBoost_sparse)
 
 if __name__ == "__main__":
-
-    dirpath = "data_example/compare/S2"
-    make_PGN_XGB(dirpath)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dirpath", type=str, default="data_example/single/")
+    args = parser.parse_args()
+    make_PGN_XGB(args.dirpath)
 
     
     

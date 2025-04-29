@@ -5,6 +5,7 @@ import math
 from scipy.spatial import distance
 import os
 from scipy.io import mmwrite
+import argparse
 
 
 def get_threshold(X, dirpath):
@@ -47,8 +48,12 @@ def get_eNN(dirpath):
 
 
 if __name__ == "__main__":
-    dirpath = "data_example/compare/"
-    get_eNN(os.path.join(dirpath, "S1"))
-    get_eNN(os.path.join(dirpath, "S2"))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dirpath", type=str, default="data_example/compare/")
+    parser.add_argument("--state1", type=str, default="S1")
+    parser.add_argument("--state2", type=str, default="S2")
+    args = parser.parse_args()
+    get_eNN(os.path.join(args.dirpath, args.state1))
+    get_eNN(os.path.join(args.dirpath, args.state2))
 
     

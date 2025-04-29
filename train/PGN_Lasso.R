@@ -113,5 +113,24 @@ make_PGN_Lasso <- function(dirpath, count_device){
 }
 
 
-make_PGN_Lasso("data_example/single", 4)
+args <- commandArgs(trailingOnly = TRUE)
+dirpath <- NULL
+count_device <- NULL
 
+for (i in seq(1, length(args))) {
+  if (args[i] == "--dirpath") {
+    dirpath <- args[i+1]
+  }
+  if (args[i] == "--count_device") {
+    count_device <- as.integer(args[i+1])
+  }
+}
+
+if (is.null(dirpath)){
+  dirpath <- "data_example/single"
+}
+if(is.null(count_device)){
+  count_device <- 1
+}
+
+make_PGN_Lasso(dirpath, count_device)
