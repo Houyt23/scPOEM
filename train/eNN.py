@@ -32,7 +32,7 @@ def get_threshold(X, dirpath):
 
     sparse_matrix = sparse.coo_matrix((vals, (rows, cols)), shape=(X.shape[0], X.shape[0]))
     sparse_matrix = sparse_matrix + sparse_matrix.T
-    mmwrite(dirpath+"test/eNN_5.mtx", sparse_matrix)
+    mmwrite(os.path.join(dirpath, "test/eNN_5.mtx"), sparse_matrix)
     return sparse_matrix
 
 

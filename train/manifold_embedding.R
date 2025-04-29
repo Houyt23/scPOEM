@@ -11,7 +11,7 @@ manifold_KNN <- function(dirpath, state1, state2){
   KNN_Y <- readMM(file.path(dirpath, state2, "test/eNN_5.mtx"))
   gene_name1 <- read.csv(file.path(dirpath, state1, "gene_data.csv"))$x
   gene_name2 <- read.csv(file.path(dirpath, state2, "gene_data.csv"))$x
-  if (!all(mapply(identical, list1, list2))){
+  if (!all(mapply(identical, gene_name1, gene_name2))){
     print("Data wrong with different genes!")
     return(0)
   }
@@ -37,6 +37,6 @@ manifold_KNN <- function(dirpath, state1, state2){
   write.csv(outputResult$diffRegulation, file=file.path(outputdir, "gene_regulation.csv"))
   write.table(outputResult$diffRegulation$gene[outputResult$diffRegulation$p.adj<0.05], file = file.path(outputdir, "gene_sig.txt"), sep = "\t", quote = FALSE, row.names = FALSE)
 }
-
+setwd("/Users/qingzhi/Documents/GitHub/scPOEM")
 manifold_KNN("data_example/compare", "S1", "S2")
 
