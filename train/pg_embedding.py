@@ -528,7 +528,7 @@ def metapath2vec_pg(dirpath):
 	
 
 if __name__ == "__main__":
-    dirpath = "data_example/single/"
+    dirpath = "data_example/compare/S2"
     metapath2vec_pg(dirpath)
     
     
