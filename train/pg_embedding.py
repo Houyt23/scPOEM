@@ -1,12 +1,10 @@
 from scipy.io import mmread
 from scipy import sparse
 import numpy as np
-import pandas as pd
 import random
 import os
 import tensorflow._api.v2.compat.v1 as tf
 tf.disable_v2_behavior()
-import json
 import matplotlib.pyplot as plt
 import time
 #from try_loss import nce_loss_my, nce_loss_my_pair, nce_loss_my_batch
@@ -79,7 +77,6 @@ class Dataset(object):
 
     def get_negative_samples(self,pos_index,num_negatives,care_type):
         # if care_type is True it's a heterogeneous negative sampling
-        #same output format as https://www.tensorflow.org/api_docs/python/tf/nn/log_uniform_candidate_sampler
         pos_prob = self.sampling_prob[pos_index] 
         if not care_type:
             negative_samples = np.random.choice(self.node_number, size=num_negatives*len(pos_index), replace=True, p=self.sampling_prob)
@@ -176,7 +173,6 @@ def nce_loss_my_pair(weights,
              sampled_values=None):
     #weights = [weights]
     
-    # 从weights中获取邻居点和负样本点的低维表示
     
     sampled_1, sampled_2 = (
         tf.stop_gradient(s) for s in sampled_values)
@@ -200,7 +196,7 @@ def nce_loss_my_pair(weights,
   # We sum out true and sampled losses.
     return tf.reduce_sum(sampled_losses, axis=1)
 
-def build_model(VOCAB_SIZE,EMBED_SIZE,NUM_SAMPLED,BATCH_SIZE):
+def build_model(VOCAB_SIZE,EMBED_SIZE,NUM_SAMPLED):
 
     with tf.name_scope('data'):
         loss_weight = tf.stop_gradient(tf.placeholder(tf.float32, [None, 1]))
@@ -228,33 +224,6 @@ def build_model(VOCAB_SIZE,EMBED_SIZE,NUM_SAMPLED,BATCH_SIZE):
 
     return loss_weight, center_node, neibor_node, negative_samples, loss
 
-def build_model_pair(VOCAB_SIZE,EMBED_SIZE,NUM_SAMPLED):
-
-    with tf.name_scope('data'):
-    
-        loss_weight = tf.Variable(1.0, dtype=tf.float32, name='loss_weight')
-        center_node = tf.Variable(initial_value=tf.zeros([1], dtype=tf.int32), name='center_node')
-        neibor_node = tf.Variable(initial_value=tf.zeros([1], dtype=tf.int32), name='neibor_node')
-        negative_samples = (
-            tf.Variable(initial_value=tf.zeros([NUM_SAMPLED], dtype=tf.int32), name='negative_samples_1'),
-            tf.Variable(initial_value=tf.zeros([NUM_SAMPLED], dtype=tf.int32), name='negative_samples_2')
-        )
-
-    with tf.name_scope('embedding_matrix'):
-        embed_matrix = tf.Variable(tf.random_uniform([VOCAB_SIZE, EMBED_SIZE], -1.0, 1.0), name='embed_matrix')
-    
-    with tf.name_scope('loss'):
-        embed = tf.nn.embedding_lookup(embed_matrix, center_node, name='embed')
-
-        loss = tf.stop_gradient(loss_weight) * tf.reduce_mean(nce_loss_my_pair(weights=embed_matrix, 
-                                            #biases=nce_bias, 
-                                            labels=neibor_node, 
-                                            inputs=embed,
-                                            sampled_values = negative_samples), name='loss')#tf.nn.nce_loss
-
-        loss_summary = tf.summary.scalar("loss_summary", loss)
-
-    return loss_weight, center_node, neibor_node, negative_samples, loss
 
 def traning_op(loss,LEARNING_RATE):
     '''
@@ -539,7 +508,7 @@ def metapath2vec_pg(dirpath):
     clip_max = np.percentile(peak_net.data, 90)
     peak_net.data = np.clip(peak_net.data, clip_min, clip_max)
     
-    gene_net = sparse.load_npz(os.path.join(dirpath, "test/GGN.npz")).toarray()
+    gene_net = sparse.coo_matrix(mmread(os.path.join(dirpath, "test/GGN.mtx"))).toarray()
     gene_net = np.abs(gene_net)
     gene_net = (gene_net + gene_net.T)/2
     gene_net[gene_net  < np.percentile(gene_net, 95)] = 0

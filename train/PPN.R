@@ -50,6 +50,10 @@ use_cicero <- function(indata, cellinfo, peakinfo, genome_file, dirpath){
   names(id1) <- NULL
   names(id2) <- NULL
   conn_mx <- sparseMatrix(i = id1, j = id2, x = co, dims = c(nrow(peakinfo), nrow(peakinfo)))
+  
+  if (!dir.exists(file.path(dirpath, "test"))) {
+    dir.create(file.path(dirpath, "test"))
+  }
   writeMM(conn_mx, file.path(dirpath, "test/PPN.mtx"))
 }
 
@@ -85,7 +89,7 @@ make_PPN <-function(dirpath){
   use_cicero(indata, cellinfo, peakinfo, "human.hg38.genome", dirpath)
 }
 
-make_PPN("data_example/single/")
+make_PPN("data_example/single")
 
 
 

@@ -27,7 +27,7 @@ myic.glmnet <- function (x, y, ...)
   return(result)
 }
 
-GetPredictionwithCrspPeaksLASSO <- function(X, Y, f=myic.glmnet, neibor_peak, gene_table){
+GetPredictionwithCrspPeaksLASSO <- function(X, Y, f=myic.glmnet, neibor_peak, gene_table, count_device){
   
   func.Optimal.lambda.match <-  function(ii){
     gene <- gene_table$gene_name[ii]
@@ -44,7 +44,7 @@ GetPredictionwithCrspPeaksLASSO <- function(X, Y, f=myic.glmnet, neibor_peak, ge
     }
     if(length(peak.ind)<=5){
       length_peak = length(peak.ind)
-      peak.ind <- seq(from = peak.ind[1], to = peak.ind[1]+5)
+      peak.ind <- seq(from = peak.ind[1], to = min(peak.ind[1]+5, ncol(X)))
     }
     if(sum(Y[,ii])==0){
       coefficient_extension <- Matrix(coefficient_extension, nrow = ncol(X), sparse = TRUE)
@@ -63,7 +63,6 @@ GetPredictionwithCrspPeaksLASSO <- function(X, Y, f=myic.glmnet, neibor_peak, ge
       else{
         ind = min(which(icmodel[["df"]]>=5))
       }
-      #if(is.infinite(ind)){ind = min(which(icmodel[["df"]]>=1))}
       coefficient=coef(icmodel)[-1, ind]
     }
     
@@ -73,7 +72,7 @@ GetPredictionwithCrspPeaksLASSO <- function(X, Y, f=myic.glmnet, neibor_peak, ge
   }
   
   
-  cl.cores = 10
+  cl.cores = count_device
   cl = makeCluster(cl.cores)
   registerDoParallel(cl)
   tic()
@@ -88,9 +87,9 @@ GetPredictionwithCrspPeaksLASSO <- function(X, Y, f=myic.glmnet, neibor_peak, ge
   return(result.pre)
 }
 
-make_PGN_Lasso <- function(dirpath){
+make_PGN_Lasso <- function(dirpath, count_device){
   X <- Matrix::readMM(file.path(dirpath, "X.mtx")) 
-  Y <- Matrix::readMM(filr.path(dirpath, "Y.mtx"))
+  Y <- Matrix::readMM(file.path(dirpath, "Y.mtx"))
   # format peak info
   
   peak_table <- read.csv(file.path(dirpath, "peak_data.csv"))
@@ -104,13 +103,15 @@ make_PGN_Lasso <- function(dirpath){
   row.names(X) <- cell_table$cell_name
   row.names(Y) <- cell_table$cell_name
   
-  neibor_peak <- read.csv(file.path(dirpath,"peakuse_chrom.csv"))
+  neibor_peak <- read.csv(file.path(dirpath,"peakuse_100kbp.csv"))
   
-  result <- GetPredictionwithCrspPeaksLASSO(X, Y, f=myic.glmnet, neibor_peak, gene_table)
+  result <- GetPredictionwithCrspPeaksLASSO(X, Y, f=myic.glmnet, neibor_peak, gene_table, count_device)
+  if (!dir.exists(file.path(dirpath, "test"))) {
+    dir.create(file.path(dirpath, "test"))
+  }
   writeMM(result, file = file.path(dirpath, "test/PGN_Lasso.mtx"))
 }
 
 
-make_PGN_Lasso("data_example/single/")
-
+make_PGN_Lasso("data_example/single", 4)
 

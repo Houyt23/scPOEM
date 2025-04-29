@@ -4,14 +4,14 @@ from scipy.io import mmread,mmwrite
 from scipy import sparse
 from scipy.sparse import csr_matrix, lil_matrix
 from xgboost import XGBRegressor
-from tqdm import tqdm  # 导入tqdm库
+from tqdm import tqdm  
 import os
 
 def PGN_XGBoost_shapley(X, Y, feature_set = None, gene_name = None):
     g = Y.shape[1]
     p = X.shape[1]
     PGN_net_matrix = sparse.csr_matrix((p, g))
-    for i in tqdm(range(g), desc="Training models for each g", ncols=100):  # 包裹进度条
+    for i in tqdm(range(g), desc="Training models for each g", ncols=100): 
         gene = gene_name[i]
         if feature_set is not None:
             gene_info = feature_set[feature_set["gene_name"] == gene]
@@ -27,7 +27,7 @@ def PGN_XGBoost_shapley(X, Y, feature_set = None, gene_name = None):
             start = 0
             end = p-1
             X_g = X
-        Y_g = Y[:, i].toarray().flatten()  # 获取对应的g标签735 1077
+        Y_g = Y[:, i].toarray().flatten() 
         
         xgb_model = XGBRegressor(n_estimators=100, objective='reg:squarederror', n_jobs=-1)
         xgb_model.fit(X_g, Y_g)
@@ -85,7 +85,7 @@ def make_PGN_XGB(dirpath):
 
 if __name__ == "__main__":
 
-    dirpath = "data_example/single/"
+    dirpath = "data_example/compare/S2"
     make_PGN_XGB(dirpath)
 
     

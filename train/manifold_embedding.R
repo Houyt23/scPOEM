@@ -7,8 +7,8 @@ library(dplyr)
 manifold_KNN <- function(dirpath, state1, state2){
   set.seed(0)
   
-  KNN_X <- readMM(file.path(dirpath, state1, "test/KNN_epsilon_5.mtx"))
-  KNN_Y <- readMM(file.path(dirpath, state2, "test/KNN_epsilon_5.mtx"))
+  KNN_X <- readMM(file.path(dirpath, state1, "test/eNN_5.mtx"))
+  KNN_Y <- readMM(file.path(dirpath, state2, "test/eNN_5.mtx"))
   gene_name1 <- read.csv(file.path(dirpath, state1, "gene_data.csv"))$x
   gene_name2 <- read.csv(file.path(dirpath, state2, "gene_data.csv"))$x
   if (!all(mapply(identical, list1, list2))){

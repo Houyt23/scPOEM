@@ -3,14 +3,11 @@ import pandas as pd
 from scipy import sparse
 import math
 from scipy.spatial import distance
-from sklearn.neighbors import NearestNeighbors
-from scipy.io import mmwrite, mmread
-from intervaltree import Interval, IntervalTree
 import os
+from scipy.io import mmwrite
 
 
 def get_threshold(X, dirpath):
-    flag = 0
     q_FDR = 0.05
 
     num = math.ceil(q_FDR * X.shape[0] * (X.shape[0]-1)/2)
@@ -35,11 +32,11 @@ def get_threshold(X, dirpath):
 
     sparse_matrix = sparse.coo_matrix((vals, (rows, cols)), shape=(X.shape[0], X.shape[0]))
     sparse_matrix = sparse_matrix + sparse_matrix.T
-    mmwrite(dirpath+"test/KNN_epsilon_5.mtx", sparse_matrix)
+    mmwrite(dirpath+"test/eNN_5.mtx", sparse_matrix)
     return sparse_matrix
 
 
-def get_KNN_epsilon(dirpath):
+def get_eNN(dirpath):
     peak_names = pd.read_csv(os.path.join(dirpath, "peak_data.csv"))
     node_used = np.load(os.path.join(dirpath, "test/node_used.npz"))['arr_0']
     node_used_peak = node_used[node_used<len(peak_names)]
@@ -51,7 +48,7 @@ def get_KNN_epsilon(dirpath):
 
 if __name__ == "__main__":
     dirpath = "data_example/compare/"
-    get_KNN_epsilon(os.path.join(dirpath, "S1"))
-    get_KNN_epsilon(os.path.join(dirpath, "S2"))
+    get_eNN(os.path.join(dirpath, "S1"))
+    get_eNN(os.path.join(dirpath, "S2"))
 
     
