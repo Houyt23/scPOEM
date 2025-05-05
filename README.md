@@ -44,7 +44,7 @@ All model code is organized under `/train`:
 ## Quick-Start Examples
 Two minimal examples to demonstrate the workflow:
 
-⚠️ **Note**: These are **toy examples** for architecture verification. For real biological data, please see our paper.
+⚠️ **Note**: These are **toy examples** for architecture verification. For real biological data used in our paper, please see `/real_data`.
 
 ### Example 1: Single Dataset Analysis
 ```bash
