@@ -19,10 +19,8 @@ def pcCoefficients(X, K, nComp):
     s = svd.singular_values_
     score = Xi@V
     beta = V @ np.diag(1/(s**2)[:nComp]) @ (score.T @ y)
-    print(f"{K} 完成！")
     return list(beta)
 
-#得到组内网络矩阵
 def pcNet(data, # X: cell * gene
     nComp= 5,
     random_state= 0): 
@@ -67,7 +65,6 @@ def make_pcNet(data,
     return net
 
 
-#基因网络
 def make_GGN(dirpath,
             rebuild_GRN = False,
             nComp = 5,
