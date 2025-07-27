@@ -4,7 +4,7 @@
 scPOEM provides a workflow to jointly embed chromatin accessibility peaks and expressed genes into a shared low-dimensional space using paired single-cell ATAC-seq (scATAC-seq) and single-cell RNA-seq (scRNA-seq) data. It integrates regulatory relationships among peak-peak interactions (via Cicero), peak-gene interactions (via Lasso, random forest, and XGBoost), and gene-gene interactions (via principal component regression). With the input of paired scATAC-seq and scRNA-seq data matrices, scPOEM assigns a low-dimensional feature vector to each gene and peak. Additionally, it supports the reconstruction of gene-gene network with low-dimensional projections (via $\epsilon$-NN) and then the comparison of the networks of two conditions through manifold alignment implemented in scTenifoldNet.
 
 ### Notes:  
-- The current implementation of scPOEM utilizes **Monocle3** and **Cicero for Monocle3** to construct peak-peak networks. We are in the process of releasing the **Monocle2**-based version, as an R package on CRAN.
+- The current implementation of scPOEM utilizes [Monocle3](https://cole-trapnell-lab.github.io/monocle3/docs/installation/) and [Cicero for Monocle3](https://cole-trapnell-lab.github.io/cicero-release/docs_m3/) to construct peak-peak networks. We are in the process of releasing the **Monocle2**-based version, as an R package on CRAN.
 ---
 
 ## Install
@@ -14,6 +14,22 @@ library(remotes)
 install_github('Houyt23/scPOEM')
 library(scPOEM)
 ```
+---
+
+## Recommended environment
+This package is implemented using both R and Python. To ensure proper functionality, we recommend the following environment settings:
+- **R version**: ≥ 4.1.0  
+- **Python version**: 3.9 
+- **Python environment**: It is recommended to use a Conda environment for Python dependencies management.  
+  You can create a conda environment using:
+  ```bash
+  conda create -n scPOEM_env python=3.9
+  conda activate scPOEM_env
+  ```
+  Then install the required Python packages:
+  ```bash
+  pip install os random numpy scipy scikit-learn matplotlib tqdm ray tensorflow
+  ```
 ---
 
 ## Input Data Requirements
@@ -96,3 +112,6 @@ compare_result <- scPOEM(mode = "compare",
                          input_data=example_data_compare,
                          dirpath=file.path(dirpath, "compare"))
 ```
+
+---
+⚠️  **For more details, please check the help document available in the inst/doc/ folder of the repository.**
