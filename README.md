@@ -8,7 +8,7 @@ scPOEM provides a workflow to jointly embed chromatin accessibility peaks and ex
 ---
 
 ## Install
-scPOEM/R is now a in development version, can be installed using the following command:
+scPOEM/R is currently a development version, but can be installed and used with the following command:
 ```R
 library(remotes)
 install_github('Houyt23/scPOEM')
