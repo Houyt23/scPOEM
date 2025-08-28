@@ -4,11 +4,18 @@
 scPOEM provides a workflow to jointly embed chromatin accessibility peaks and expressed genes into a shared low-dimensional space using paired single-cell ATAC-seq (scATAC-seq) and single-cell RNA-seq (scRNA-seq) data. It integrates regulatory relationships among peak-peak interactions (via Cicero), peak-gene interactions (via Lasso, random forest, and XGBoost), and gene-gene interactions (via principal component regression). With the input of paired scATAC-seq and scRNA-seq data matrices, scPOEM assigns a low-dimensional feature vector to each gene and peak. Additionally, it supports the reconstruction of gene-gene network with low-dimensional projections (via $\epsilon$-NN) and then the comparison of the networks of two conditions through manifold alignment implemented in scTenifoldNet.
 
 ### Notes:  
-- The current implementation of scPOEM utilizes [Monocle3](https://cole-trapnell-lab.github.io/monocle3/docs/installation/) and [Cicero for Monocle3](https://cole-trapnell-lab.github.io/cicero-release/docs_m3/) to construct peak-peak networks. We are in the process of releasing the **Monocle2**-based version, as an R package on CRAN.
+- The CRAN release of the R package scPOEM is built on [Monocle2](https://cole-trapnell-lab.github.io/monocle-release/docs/) and [Cicero for Monocle2](https://cole-trapnell-lab.github.io/cicero-release/docs/) to construct peak–peak networks.
+- The GitHub development version of scPOEM utilizes [Monocle3](https://cole-trapnell-lab.github.io/monocle3/docs/installation/) and [Cicero for Monocle3](https://cole-trapnell-lab.github.io/cicero-release/docs_m3/) to construct peak-peak networks.
 ---
 
 ## Install
-scPOEM/R is currently a development version, but can be installed and used with the following command:
+Two versions of **scPOEM** are available:
+1. **CRAN version (Monocle2 + Cicero for Monocle2)**
+```R
+install.packages("scPOEM", repos = "https://cran.r-project.org")
+library(scPOEM)
+```
+2. **GitHub version (Monocle3 + Cicero for Monocle3, development)**
 ```R
 library(remotes)
 install_github('Houyt23/scPOEM')
