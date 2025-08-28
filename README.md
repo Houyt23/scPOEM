@@ -12,7 +12,7 @@ scPOEM provides a workflow to jointly embed chromatin accessibility peaks and ex
 Two versions of **scPOEM** are available:
 1. **CRAN version (Monocle2 + Cicero for Monocle2)**
 ```R
-install.packages("scPOEM", repos = "https://cran.r-project.org")
+install.packages("scPOEM")
 library(scPOEM)
 ```
 2. **GitHub version (Monocle3 + Cicero for Monocle3, development)**
