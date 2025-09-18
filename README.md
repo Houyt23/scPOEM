@@ -127,5 +127,5 @@ compare_result <- scPOEM(mode = "compare",
 
 If you use **scPOEM** in your work, please cite the following paper:
 
-Zhong, Yan, Yuntong Hou, Yongjian Yang, Xinyue Zheng, James J. Cai. "scPOEM: Robust Co-embedding of Peaks and Genes Revealing Peak-Gene Regulation." Bioinformatics (in press).
+Zhong, Y., Hou, Y., Yang, Y., Zheng, X., & Cai, J. J. (2025). scPOEM: Robust Co-embedding of Peaks and Genes Revealing Peak-Gene Regulation. Bioinformatics, btaf483.
 
